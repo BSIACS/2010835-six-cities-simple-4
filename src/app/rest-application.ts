@@ -13,6 +13,6 @@ export class RestApplication {
 
   public async init(){
     this.logger.info('Application has been initialized');
-    this.config.get('PORT');
+    this.logger.info(`Port - ${this.config.get('PORT')}`);
   }
 }

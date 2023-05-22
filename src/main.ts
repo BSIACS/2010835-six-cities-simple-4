@@ -6,7 +6,6 @@ import { LoggerInterface } from './core/services/logger/logger.interface.js';
 import { ApplicationComponent } from './types/application-component.js';
 import { ConfigService } from './core/services/config/config.service.js';
 import { ConfigInterface } from './core/services/config/config.interface.js';
-import { configSchema } from './core/services/config/config.schema.js';
 
 
 async function bootstrap(){
@@ -21,7 +20,3 @@ async function bootstrap(){
 }
 
 bootstrap();
-
-const test = configSchema.get('DB_HOST');
-
-console.log(test);

@@ -1,22 +1,32 @@
-
-import { injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
 import { ConfigInterface } from './config.interface.js';
-import convict from 'convict';
 import { ConfigSchema, configSchema } from './config.schema.js';
+import { config } from 'dotenv';
+import { ApplicationComponent } from '../../../types/application-component.js';
+import { LoggerInterface } from '../logger/logger.interface.js';
 
 
 @injectable()
 export class ConfigService implements ConfigInterface {
-  private cofigSchema: convict.Config<ConfigSchema>;
+  private configSchema: ConfigSchema;
 
-  constructor(){
-    this.cofigSchema = configSchema;
+  constructor(
+    @inject(ApplicationComponent.LoggerInterface) private readonly logger: LoggerInterface,
+  ){
+    const parsedOutput = config();
+
+    if (parsedOutput.error) {
+      throw new Error('Can\'t read .env file. Perhaps the file does not exists.');
+    }
+
+    configSchema.load({});
+    configSchema.validate({ allowed: 'strict', output: this.logger.info });
+
+    this.configSchema = configSchema.getProperties();
+    this.logger.info('.env file found and successfully parsed!');
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   public get(key: keyof ConfigSchema): ConfigSchema[keyof ConfigSchema]{
-    const result = this.cofigSchema.get(key);
-
-    return result;
+    return this.configSchema[key];
   }
 }
